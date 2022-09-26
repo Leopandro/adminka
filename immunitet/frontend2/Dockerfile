@@ -1,0 +1,39 @@
+FROM node:12.19.0-alpine3.10 as develop-stage
+
+RUN apk --update add wget \
+  supervisor
+
+ENV APP_ROOT /app
+
+WORKDIR ${APP_ROOT}
+
+ADD ./package-lock.json ${APP_ROOT}
+ADD ./package.json ${APP_ROOT}
+RUN npm install
+
+ARG FRONTEND_SERVER_API_BASE_URL
+ARG FRONTEND_SERVER_API_BASE_URL_BROWSER
+ARG FRONTEND_SERVER_RECAPTCHA_SITE_KEY
+
+ENV FRONTEND_SERVER_API_BASE_URL=${FRONTEND_SERVER_API_BASE_URL}
+ENV FRONTEND_SERVER_API_BASE_URL_BROWSER=${FRONTEND_SERVER_API_BASE_URL_BROWSER}
+ENV CHOKIDAR_USEPOLLING=1
+ENV NUXT_TELEMETRY_DISABLED=false
+ENV FRONTEND_SERVER_RECAPTCHA_SITE_KEY=${FRONTEND_SERVER_RECAPTCHA_SITE_KEY}
+
+ADD . ${APP_ROOT}
+
+RUN npm rebuild node-sass
+RUN npm run build
+
+ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3005
+
+EXPOSE 3005
+
+COPY supervisord.conf /etc/supervisord.conf
+COPY supervisord.d /etc/supervisord.d
+
+ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
+
+WORKDIR /etc/supervisor/conf.d/
