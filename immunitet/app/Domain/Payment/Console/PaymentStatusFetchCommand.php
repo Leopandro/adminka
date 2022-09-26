@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Domain\Payment\Console;
@@ -28,7 +27,8 @@ class PaymentStatusFetchCommand extends BaseConsoleCommand
         $payments = Payment::query()->where('status','=',PaymentStatus::CREATED)->get();
         foreach ($payments as $payment) {
             /** @var Payment $payment */
-            $payment->status = PaymentStatus::FAILED;
+//            $payment->status = PaymentStatus::FAILED;
+            $payment->updated_at = now();
             $payment->save();
         }
     }

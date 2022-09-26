@@ -18,6 +18,10 @@ class PaymentService
     }
 
     protected function handleResult(object $response): array {
+        if (isset($response->Model->TransactionId)) {
+            $this->payment->transaction_id = $response->Model->TransactionId;
+            $this->payment->save();
+        }
         if ($response->Success === true) {
             return [
                 "status" => PaymentTransaction::ACCEPTED,

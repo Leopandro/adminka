@@ -21,7 +21,7 @@ return new class extends Migration
         Schema::create('company', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 32);
-            $table->integer('inn');
+            $table->bigInteger('inn');
             $table->integer('postcode');
             $table->foreignId('country_id')
                 ->references('id')

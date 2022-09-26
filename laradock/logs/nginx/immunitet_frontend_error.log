@@ -178,3 +178,5 @@
 2022/09/26 14:44:15 [error] 10#10: *1251 "/var/www/frontend/dist/HNAP1/index.html" is not found (2: No such file or directory), client: 172.24.0.1, server: localhost, request: "POST /HNAP1/ HTTP/1.0", host: "77.40.48.136:80"
 2022/09/26 14:51:57 [error] 10#10: *1252 open() "/var/www/frontend/dist/.env" failed (2: No such file or directory), client: 172.24.0.1, server: localhost, request: "GET /.env HTTP/1.1", host: "77.40.48.136"
 2022/09/26 15:11:30 [error] 10#10: *1272 directory index of "/var/www/frontend/dist/" is forbidden, client: 172.24.0.1, server: localhost, request: "GET / HTTP/1.1", host: "77.40.48.136"
+2022/09/26 16:19:18 [error] 11#11: *14 open() "/var/www/frontend/dist/manager/text/list" failed (2: No such file or directory), client: 172.27.0.1, server: localhost, request: "GET /manager/text/list HTTP/1.1", host: "77.40.48.136"
+2022/09/26 16:59:16 [error] 11#11: *83 open() "/var/www/frontend/dist/manager/html" failed (2: No such file or directory), client: 172.27.0.1, server: localhost, request: "GET /manager/html HTTP/1.1", host: "77.40.48.136"

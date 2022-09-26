@@ -13,10 +13,16 @@
               <div class="form-group">
                 <label for="company" class=" form-control-label">Названии организации</label>
                 <input v-model="company.name" type="text" id="company" placeholder="ООО Ромашка-Пример" class="form-control">
+                <div class="alert alert-danger" v-if="form.errors['name']">
+                  {{form.errors['name'][0]}}
+                </div>
               </div>
               <div class="form-group">
                 <label for="vat" class=" form-control-label">ИНН</label>
                 <input v-model="company.inn" type="text" id="vat" placeholder="XYZXXXXXXXX" class="form-control">
+                <div class="alert alert-danger" v-if="form.errors['inn']">
+                  {{form.errors['inn'][0]}}
+                </div>
               </div>
 
 
@@ -27,6 +33,9 @@
                     {{country.name}}
                   </option>
                 </select>
+                <div class="alert alert-danger" v-if="form.errors['country_id']">
+                  {{form.errors['country_id'][0]}}
+                </div>
               </div>
 
               <div class="row form-group">
@@ -34,25 +43,33 @@
                   <div class="form-group">
                     <label for="postal-code" class=" form-control-label">Почтовый Индекс</label>
                     <input v-model="company.postcode" type="text" id="postal-code" placeholder="123123" class="form-control">
+                    <div class="alert alert-danger" v-if="form.errors['postcode']">
+                      {{form.errors['postcode'][0]}}
+                    </div>
                   </div>
                 </div>
                 <div class="col-8">
                   <div class="form-group">
                     <label for="city" class=" form-control-label">Город</label>
                     <input v-model="company.city" type="text" id="city" placeholder="Город регистрации юр.лица" class="form-control">
+                    <div class="alert alert-danger" v-if="form.errors['city']">
+                      {{form.errors['city'][0]}}
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="form-group">
                 <label for="street" class=" form-control-label">Адрес</label>
                 <input v-model="company.address" type="text" id="street" placeholder="Юридический адрес" class="form-control">
+                <div class="alert alert-danger" v-if="form.errors['address']">
+                  {{form.errors['address'][0]}}
+                </div>
               </div>
-
               <div class="card-footer">
-                <button v-on:click="submitButton()" type="button" class="btn btn-primary btn-sm">
+                <button v-on:click="saveCompany()" type="button" class="btn btn-primary btn-sm">
                   <i class="fa fa-dot-circle-o"></i> Сохранить
                 </button>
-                <button type="reset" class="btn btn-danger btn-sm">
+                <button v-on:click="getCompany()" type="reset" class="btn btn-danger btn-sm">
                   <i class="fa fa-ban"></i> Сбросить
                 </button>
               </div>
@@ -127,6 +144,10 @@ export default {
   layout: 'dashboard',
   data() {
     return {
+      form: {
+        error: false,
+        errors: []
+      },
       paymentResult: {
         message: '',
         visible: false,
@@ -178,15 +199,19 @@ export default {
           this.company = response.data.data;
         });
     },
-    async submitButton() {
+    async saveCompany() {
       let company = this.company;
       this.$axios
         .post('/api/company/create', {
           ...company
         })
         .then((response) => {
-          console.log(response);
-        });
+          this.form.errors = [];
+        }).catch((error) => {
+          const result = error.response.data;
+          this.form.errors = result.errors;
+          this.form.error = true;
+      });
     },
     async initiateScript() {
       const checkout = new cp.Checkout({

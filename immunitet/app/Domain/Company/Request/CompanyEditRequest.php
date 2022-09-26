@@ -10,12 +10,12 @@ class CompanyEditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'inn' => 'required|integer|digits_between:10,12',
+            'inn' => 'required|integer|regex:/^\d{10,12}$/',
             'name' => 'required|string|max:32',
             'postcode' => 'required|integer|digits_between:6,6',
             'country_id' => 'required|integer|exists:country,id',
             'city' => 'required|string|max:28',
-            'address' => 'sometimes|string|max:255',
+            'address' => 'nullable|string|max:255',
         ];
     }
 }
