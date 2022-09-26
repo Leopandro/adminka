@@ -1,0 +1,9 @@
+2022/09/22 14:35:40 [emerg] 10#10: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:41 [emerg] 9#9: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:42 [emerg] 14#14: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:42 [emerg] 11#11: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:44 [emerg] 11#11: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:46 [emerg] 13#13: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:49 [emerg] 9#9: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:35:56 [emerg] 10#10: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
+2022/09/22 14:36:09 [emerg] 10#10: duplicate location "/" in /etc/nginx/sites-available/default.conf:27
