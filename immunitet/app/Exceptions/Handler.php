@@ -2,11 +2,20 @@
 
 namespace App\Exceptions;
 
+use App\Enum\ErrorCodes;
+use App\Infrastructure\Controller\FormatsApiResponse;
+use App\Infrastructure\Exception\TokenExpireException;
+use App\Infrastructure\Lang\Translator;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use FormatsApiResponse;
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -46,5 +55,18 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof NotFoundHttpException) {
+            return $this->getSingleErrorResponse(Translator::translate('Страница не найдена'), 404);
+        }
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return $this->getSingleErrorResponse(Translator::translate('Метод не разрешен'), 405);
+        }
+
+        return parent::render($request, $exception);
     }
 }

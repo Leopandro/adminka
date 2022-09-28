@@ -6,7 +6,7 @@ export default {
   },
   watchQuery: ['page', 'order', 'q'],
   axios: {
-    baseURL: 'http://localhost:8000', // Used as fallback if no runtime config is provided
+    baseURL: process.env.NODE_ENV !== 'production' ? 'http://localhost:8000' : process.env.PRODUCTION_URL , // Used as fallback if no runtime config is provided
   },
   env: {
     baseUrl: process.env.BASE_URL || 'http://localhost:3000'
@@ -86,6 +86,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+
+    './plugins/axios-interceptors.js',
+    './plugins/axios-accessor.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

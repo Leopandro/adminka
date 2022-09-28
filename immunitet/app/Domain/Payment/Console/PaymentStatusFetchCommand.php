@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Domain\Payment\Console;
 
 use App\Domain\Payment\Model\Payment;
+use App\Domain\Payment\Service\PaymentTransactionInfoService;
 use App\Enum\PaymentStatus;
 use App\Infrastructure\ConsoleCommand\BaseConsoleCommand;
 use Carbon\Carbon;
@@ -24,11 +25,18 @@ class PaymentStatusFetchCommand extends BaseConsoleCommand
      */
     public function handleInternal(): void
     {
-        $payments = Payment::query()->where('status','=',PaymentStatus::CREATED)->get();
+        /** @var Payment $payment */
+        $payments = Payment::query()
+            ->where('status','=',PaymentStatus::CREATED)
+            ->where('created_at','<',Carbon::now()->subMinutes(3))
+            ->get();
         foreach ($payments as $payment) {
-            /** @var Payment $payment */
-//            $payment->status = PaymentStatus::FAILED;
-            $payment->updated_at = now();
+            $result = (new PaymentTransactionInfoService($payment))->get();
+            if ($result->Success) {
+                $payment->status = PaymentStatus::SUCCESS;
+            } else {
+                $payment->status = PaymentStatus::FAILED;
+            }
             $payment->save();
         }
     }

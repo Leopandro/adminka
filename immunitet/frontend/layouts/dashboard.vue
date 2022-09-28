@@ -79,20 +79,17 @@
                       </div>
                       <div class="account-dropdown__body">
                         <div class="account-dropdown__item">
-                          <a href="accaunt.php">
-                            <i class="zmdi zmdi-account"></i>Аккаунт</a>
+                          <nuxt-link to="/user/password" prefetch><i class="zmdi zmdi-account"></i>Аккаунт</nuxt-link>
                         </div>
                         <div class="account-dropdown__item">
-                          <a href="config.php">
-                            <i class="zmdi zmdi-settings"></i>Настройки</a>
+                          <nuxt-link to="/dashboard/configuration" prefetch><i class="zmdi zmdi-settings"></i>Настройки</nuxt-link>
                         </div>
                         <div class="account-dropdown__item">
-                          <a href="billing.php">
-                            <i class="zmdi zmdi-money-box"></i>Биллинг</a>
+                          <nuxt-link to="/dashboard/payment" prefetch><i class="zmdi zmdi-money-box"></i>Биллинг</nuxt-link>
                         </div>
                       </div>
                       <div class="account-dropdown__footer">
-                        <a href="do_logout.php">
+                        <a href="#" v-on:click="logout()">
                           <i class="zmdi zmdi-power"></i>Выход</a>
                       </div>
                     </div>
@@ -121,6 +118,13 @@ export default {
     };
   },
   methods: {
+    logout: function() {
+      this.$auth.logout().then(() => {
+        this.$router.push({
+          path: '/login'
+        })
+      });
+    },
     toggleMenu: function(event) {
       this.showTopMenu = !this.showTopMenu;
     },

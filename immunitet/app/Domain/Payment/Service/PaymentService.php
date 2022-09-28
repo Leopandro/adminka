@@ -5,12 +5,11 @@ use App\Domain\Payment\Model\Payment;
 use App\Domain\User\Model\User;
 use App\Enum\PaymentTransaction;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\URL;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Http\Request;
 
 class PaymentService
 {
-    public function __construct(protected User $user, protected Payment $payment) {}
+    public function __construct(protected User $user, protected Payment $payment, protected Request $request) {}
     public function initiatePayment(): array
     {
         $response = $this->post();
@@ -25,7 +24,7 @@ class PaymentService
         if ($response->Success === true) {
             return [
                 "status" => PaymentTransaction::ACCEPTED,
-                "message" => "Транзакция принята"
+                "message" => "Транзакция успешно выполнена"
             ];
         }
         if ($response->Success === false && isset($response->Model) && isset($response->Model->ReasonCode)) {
@@ -58,7 +57,12 @@ class PaymentService
 
     protected function getFrontendUrl(): string
     {
-        return "http://".$_SERVER['SERVER_NAME']."/dashboard/payment?successPayment=true";
+        if (request()->secure()) {
+            $protocol = "https://";
+        } else {
+            $protocol = "http://";
+        }
+        return $protocol.$_SERVER['SERVER_NAME']."/dashboard/payment?successPayment=true";
     }
 
     protected function post(): object
@@ -70,10 +74,10 @@ class PaymentService
                 'form_params' =>
                     [
                         'CardCryptogramPacket' => $this->payment->payment_cryptogram,
-                        'Amount' => 1,
+                        'Amount' => $this->payment->sum,
                         'InvoiceId' => '',
                         'Currency' => 'RUB',
-                        'IpAddress' => '77.40.48.136',
+                        'IpAddress' => $this->request->ip(),
                     ]
             ]
         );

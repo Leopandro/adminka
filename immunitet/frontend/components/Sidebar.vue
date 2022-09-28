@@ -18,17 +18,17 @@
           <nuxt-link to="/dashboard/payment" prefetch><i class="fas fa-rouble"></i>Оплата</nuxt-link>
         </li>
         <li class="active has-sub">
-          <a class="js-arrow" href="#">
+          <a class="js-arrow" href="#" v-on:click="openAuthorizationMenu">
             <i class="fas fa-copy"></i>Авторизация</a>
-          <ul class="list-unstyled navbar__sub-list js-sub-list">
+          <ul class="list-unstyled navbar__sub-list js-sub-list" :class="{ 'menu-sidebar-visible': showAuthorizationMenu }">
             <li>
-              <a href="login.php">Вход</a>
+              <nuxt-link to="/login" prefetch>Вход</nuxt-link>
             </li>
             <li>
-              <a href="register.php">Регистрация</a>
+              <nuxt-link to="/auth/register" prefetch>Регистрация</nuxt-link>
             </li>
             <li>
-              <a href="forget-pass.php">Забыл пароль</a>
+              <nuxt-link to="/auth/password-remind" prefetch>Забыл пароль</nuxt-link>
             </li>
           </ul>
         </li>
@@ -39,6 +39,21 @@
 
 <script>
 export default {
-  name: 'Sidebar'
+  name: 'Sidebar',
+  data() {
+    return {
+      showAuthorizationMenu: false
+    }
+  },
+  methods: {
+    openAuthorizationMenu(){
+      this.showAuthorizationMenu = !this.showAuthorizationMenu
+    }
+  }
 }
 </script>
+<style>
+.menu-sidebar .navbar-sidebar .has-sub .menu-sidebar-visible {
+  display: block;
+}
+</style>

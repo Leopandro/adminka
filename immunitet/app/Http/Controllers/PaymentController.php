@@ -21,7 +21,7 @@ class PaymentController extends Controller
         $payment->payment_uuid = $paymentUuid;
         $payment->currency = 'RUB';
         $payment->save();
-        $paymentResult = (new PaymentService($user, $payment))->initiatePayment();
+        $paymentResult = (new PaymentService($user, $payment, $request))->initiatePayment();
         return $this->getSuccessResponse($paymentResult);
     }
 }
