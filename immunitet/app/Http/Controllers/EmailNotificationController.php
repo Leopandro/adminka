@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Domain\EmailNotification\Model\EmailNotification;
+use App\Domain\EmailNotification\Request\EmailNotificationEditRequest;
 use App\Domain\Payment\Model\Payment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class EmailNotificationController extends Controller
         return $this->getSuccessResponse($emailNotification->toArray());
     }
 
-    public function createOrUpdate(Request $request): JsonResponse
+    public function createOrUpdate(EmailNotificationEditRequest $request): JsonResponse
     {
         /** @var EmailNotification $emailNotification */
         $emailNotification = EmailNotification::query()->where('user_id','=',auth('sanctum')->id())->first();
@@ -34,16 +35,12 @@ class EmailNotificationController extends Controller
     {
         $array = [
             [
-                'type' => 'week',
-                'label' => '1 раз в неделю'
-            ],
-            [
                 'type' => 'day',
-                'label' => '1 раз в день'
+                'label' => '1 раз в сутки'
             ],
             [
                 'type' => 'regular',
-                'label' => 'Непрерывный (Рекомендовано)'
+                'label' => 'Незамедлительно (Рекомендовано)'
             ],
         ];
         return $this->getSuccessResponse($array);

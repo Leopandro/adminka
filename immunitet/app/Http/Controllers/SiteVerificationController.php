@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Company\Model\Company;
-use App\Domain\Company\Request\CompanyEditRequest;
-use App\Domain\Company\Resource\CompanyResource;
 use App\Domain\Payment\Model\Payment;
-use App\Domain\Payment\Service\PaymentTransactionInfoService;
 use App\Domain\SiteVerification\Model\SiteVerification;
-use App\Enum\PaymentStatus;
+use App\Domain\SiteVerification\Request\SiteVerificationEditRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\ValidationException;
 
 class SiteVerificationController extends Controller
 {
@@ -21,7 +19,7 @@ class SiteVerificationController extends Controller
         return $this->getSuccessResponse($siteVerification->toArray());
     }
 
-    public function createOrUpdate(Request $request): JsonResponse
+    public function createOrUpdate(SiteVerificationEditRequest $request): JsonResponse
     {
         /** @var SiteVerification $payment */
         $siteVerification = SiteVerification::query()->where('user_id','=',auth('sanctum')->id())->first();
@@ -29,6 +27,9 @@ class SiteVerificationController extends Controller
             $siteVerification = new SiteVerification();
         }
         $siteVerification->verification_list = preg_split("/\r\n|\n|\r|;/", $request->get('verification_list'));
+        if (count($siteVerification->verification_list) > Config::get('settings.max_items_count')) {
+            throw ValidationException::withMessages(['verification_list' => 'Количество строк не должно быть больше '.Config::get('settings.max_items_count')]);
+        }
         $siteVerification->user_id = auth('sanctum')->id();
         $siteVerification->period = $request->get('period');
         $siteVerification->save();

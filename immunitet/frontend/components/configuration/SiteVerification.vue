@@ -27,10 +27,11 @@
         </div>
         <div class="row form-group">
           <div class="col col-md-3">
-            <label for="file-input" class=" form-control-label">Загрузить список</label>
+            <label for="file-input" class="form-control-label">Загрузить список сайтов</label>
           </div>
           <div class="col-12 col-md-9">
-            <input @change="uploadFile" type="file" ref="file" class="form-control-file">
+            <input @change="uploadFile" type="file"
+                   name="file" ref="file" class="form-control-file">
           </div>
         </div>
         <div class="row form-group">
@@ -39,9 +40,12 @@
           </div>
           <div class="col-12 col-md-9">
             <select v-model="model.period"  class="form-control">
-              <option value="">Пожалуйста сделйте выбор</option>
+              <option value="">Пожалуйста сделайте выбор</option>
               <option v-for="period of periodList" v-bind:value="period.type">{{ period.label }}</option>
             </select>
+            <div class="alert alert-danger" v-if="form.errors['period']">
+              {{ form.errors['period'][0] }}
+            </div>
           </div>
         </div>
         <div class="row form-group">
@@ -58,6 +62,11 @@
           </div>
         </div>
 
+        <div class="row" v-if="queryResult.visible">
+          <div v-bind:class="queryResult.class">
+            {{ queryResult.message }}
+          </div>
+        </div>
         <div class="card-footer">
           <button v-on:click="save()" type="button" class="btn btn-primary btn-sm">
             <i class="fa fa-dot-circle-o"></i> Сохранить
@@ -80,12 +89,17 @@ export default {
   name: 'Verify',
   data() {
     return {
+      queryResult: {
+        message: '',
+        visible: false,
+        class: ''
+      },
       form: {
         error: false,
         errors: []
       },
       periodList: [],
-      file: '',
+      file: null,
       model: {
         verification_list: '',
         period: '',
@@ -118,17 +132,29 @@ export default {
     },
     async save() {
       let model = this.model;
+      this.queryResult.visible = false;
       $axios
         .post('/api/site-requisites/create', {
           ...model
         })
         .then((response) => {
           this.form.errors = [];
+          this.showSuccessMessage("Успешно сохранено!");
         }).catch((error) => {
         const result = error.response.data;
         this.form.errors = result.errors;
         this.form.error = true;
       });
+    },
+    showSuccessMessage(message) {
+      this.queryResult.class = 'alert alert-success';
+      this.queryResult.message = message;
+      this.queryResult.visible = true;
+    },
+    showErrorMessage(message) {
+      this.queryResult.class = 'alert alert-danger';
+      this.queryResult.message = message;
+      this.queryResult.visible = true;
     },
   },
   mounted() {

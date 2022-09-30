@@ -42,6 +42,9 @@
               <option value="">Пожалуйста сделйте выбор</option>
               <option v-for="period of periodList" v-bind:value="period.type">{{ period.label }}</option>
             </select>
+            <div class="alert alert-danger" v-if="form.errors['period']">
+              {{ form.errors['period'][0] }}
+            </div>
           </div>
         </div>
         <div class="row form-group">
@@ -55,6 +58,12 @@
               <option value="2">Option #2</option>
               <option value="3">Option #3</option>
             </select>
+          </div>
+        </div>
+
+        <div class="row" v-if="queryResult.visible">
+          <div v-bind:class="queryResult.class">
+            {{ queryResult.message }}
           </div>
         </div>
 
@@ -80,6 +89,11 @@ export default {
   name: 'EmailNotification',
   data() {
     return {
+      queryResult: {
+        message: '',
+        visible: false,
+        class: ''
+      },
       form: {
         error: false,
         errors: []
@@ -101,7 +115,7 @@ export default {
     },
     async getPeriodList() {
       $axios
-        .get('/api/site-requisites/getPeriodList')
+        .get('/api/email-notification/getPeriodList')
         .then((response) => {
           console.log(response);
           this.periodList = response.data.data;
@@ -118,17 +132,29 @@ export default {
     },
     async save() {
       let model = this.model;
+      this.queryResult.visible = false;
       $axios
         .post('/api/email-notification/create', {
           ...model
         })
         .then((response) => {
+          this.showSuccessMessage("Успешно сохранено!");
           this.form.errors = [];
         }).catch((error) => {
         const result = error.response.data;
         this.form.errors = result.errors;
         this.form.error = true;
       });
+    },
+    showSuccessMessage(message) {
+      this.queryResult.class = 'alert alert-success';
+      this.queryResult.message = message;
+      this.queryResult.visible = true;
+    },
+    showErrorMessage(message) {
+      this.queryResult.class = 'alert alert-danger';
+      this.queryResult.message = message;
+      this.queryResult.visible = true;
     },
   },
   mounted() {

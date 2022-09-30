@@ -15,7 +15,7 @@ class CompanyController extends Controller
         /** @var Company $company */
         $company = Company::query()
             ->where('user_id','=',auth('sanctum')->id())
-            ->first();
+            ->firstOrFail();
         return $this->getSuccessResponse((new CompanyResource($company))->toArray($request));
     }
 

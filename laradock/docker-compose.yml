@@ -274,27 +274,6 @@ services:
       - backend
     restart: always
 
-  ### frontend-dev-server ####################################################
-  frontend-dev-server:
-    container_name: frontend_dev_server
-    build:
-      context: ${FRONTEND_SERVER_CODE_PATH_HOST}
-    volumes:
-      - "${FRONTEND_SERVER_CODE_PATH_HOST}:/app"
-      - "/app/node_modules/"
-    ports:
-      - "${FRONTEND_DEV_SERVER_PORT}:3005"
-    command: [ "npm", "run", "dev" ]
-    environment:
-      - FRONTEND_SERVER_API_BASE_URL=http://nginx:${NGINX_HOST_API_PORT}
-      - FRONTEND_SERVER_API_BASE_URL_BROWSER=${FRONTEND_SERVER_API_BASE_URL}
-      - CHOKIDAR_USEPOLLING=true
-      - NUXT_TELEMETRY_DISABLED=1
-      - FRONTEND_SERVER_RECAPTCHA_SITE_KEY=${FRONTEND_SERVER_RECAPTCHA_SITE_KEY}
-    networks:
-      - frontend
-      - backend
-
   ### PHP-FPM ##############################################
   php-fpm:
     build:

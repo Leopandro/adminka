@@ -37,12 +37,12 @@
                     <input type="checkbox" v-model="model.agree">Согласен с условия использования
                   </label>
                 </div>
-                <button v-on:click="submit()" v-bind:disabled="model.agree === false" class="au-btn au-btn--block au-btn--green m-b-20" type="button">Регистрация</button>
+                <button v-on:click="submit()" v-bind:class="getRegisterButtonClass()" type="button">Регистрация</button>
               </form>
               <div class="register-link">
                 <p>
                   У Вас есть доступ?
-                  <a href="register.php">Получить приват</a>
+                  <NuxtLink to="/login">Войти</NuxtLink>
                 </p>
               </div>
             </div>
@@ -78,7 +78,16 @@ export default {
     }
   },
   methods: {
+    getRegisterButtonClass() {
+      let buttonClass = "au-btn au-btn--block au-btn--green m-b-20";
+      if (this.model.agree) {
+        return buttonClass;
+      } else {
+         return buttonClass + " disabled-button";
+      }
+    },
     submit() {
+      console.log('click');
       $axios.post('/api/auth/register', {
         ...this.model
       }).then(
@@ -96,3 +105,11 @@ export default {
   }
 }
 </script>
+<style>
+.disabled-button {
+  background: grey;
+}
+.disabled-button:hover {
+  background: #6E6E6E;
+}
+</style>
