@@ -20,7 +20,7 @@
     "test": "jest --no-cache",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "prepare": "cd ../.. && husky install .husky && husky add .husky/pre-commit \"npm run lint-frontend\""
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1648802546.c9880dc",
