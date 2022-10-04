@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Payment\Model\Payment;
 use App\Domain\SiteVerification\Model\SiteVerification;
+use App\Domain\SiteVerification\Model\SiteVerificationItem;
 use App\Domain\SiteVerification\Request\SiteVerificationEditRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,13 +27,21 @@ class SiteVerificationController extends Controller
         if (!$siteVerification) {
             $siteVerification = new SiteVerification();
         }
-        $siteVerification->verification_list = preg_split("/\r\n|\n|\r|;/", $request->get('verification_list'));
-        if (count($siteVerification->verification_list) > Config::get('settings.max_items_count')) {
+        $verification_list = preg_split("/\r\n|\n|\r|;/", $request->get('verification_list'));
+        if (count($verification_list) > Config::get('settings.max_items_count')) {
             throw ValidationException::withMessages(['verification_list' => 'Количество строк не должно быть больше '.Config::get('settings.max_items_count')]);
+        } else {
         }
         $siteVerification->user_id = auth('sanctum')->id();
         $siteVerification->period = $request->get('period');
         $siteVerification->save();
+        SiteVerificationItem::query()->where('site_list_id','=',$siteVerification->id)->delete();
+        foreach ($verification_list as $item) {
+            $siteVerificationItem = SiteVerificationItem::query()->create([
+                'value' => $item,
+                'site_list_id' => $siteVerification->id
+            ]);
+        }
         return $this->getSuccessResponse([]);
     }
 
